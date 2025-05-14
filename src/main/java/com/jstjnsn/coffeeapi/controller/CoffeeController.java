@@ -12,42 +12,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jstjnsn.coffeeapi.model.Coffee;
-import com.jstjnsn.coffeeapi.repository.CoffeeRepository;
+import com.jstjnsn.coffeeapi.service.CoffeeService;
 
 @RestController
 @RequestMapping("/api/coffee")
 public class CoffeeController {
-    private final CoffeeRepository repository;
+    private final CoffeeService service;
 
-    public CoffeeController(CoffeeRepository repository) {
-        this.repository = repository;
+    public CoffeeController(CoffeeService service) {
+        this.service = service;
     }
 
     @GetMapping
     public List<Coffee> getAllCoffee() {
-        return repository.findAll();
+        return service.getAllCoffee();
     }
 
     @GetMapping("/{id}")
     public Coffee getCoffeeById(@PathVariable Long id) {
-        return repository.findById(id).orElse(null);
+        return service.getCoffeeById(id).orElse(null);
     }
 
     @PostMapping
     public Coffee createCoffee(@RequestBody Coffee coffee) {
-        return repository.save(coffee);
+        return service.createCoffee(coffee);
     }
 
     @PutMapping("/{id}")
     public Coffee updateCoffee(@PathVariable Long id, @RequestBody Coffee updatedCoffee) {
-        return repository.findById(id).map(coffee -> {
-            coffee.setName(updatedCoffee.getName());
-            return repository.save(coffee);
-        }).orElse(null);
+        return service.updateCoffee(id, updatedCoffee).orElse(null);
     }
 
     @DeleteMapping("/{id}")
     public void deleteCoffee(@PathVariable Long id) {
-        repository.deleteById(id);
+        service.deleteCoffee(id);
     }
 }
